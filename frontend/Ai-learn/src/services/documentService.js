@@ -33,6 +33,7 @@ const deleteDocument = async (id) => {
     const response = await axiosInstance.delete(
       API_PATHS.DOCUMENTS.DELETE_DOCUMENT(id)
     );
+    console.log(response.data);
     return response.data;
   } catch (error) {
     throw error.response?.data || { message: "Failed to delete document" };
