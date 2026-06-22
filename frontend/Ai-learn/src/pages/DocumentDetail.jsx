@@ -34,6 +34,7 @@ const DocumentDetailPage = () => {
 
   // ---------- PDF URL ----------
   const getPdfUrl = () => {
+    if (document?.data?.fileUrl) return document.data.fileUrl;
     if (!document?.data?.filePath) return null;
 
     const filePath = document.data.filePath;

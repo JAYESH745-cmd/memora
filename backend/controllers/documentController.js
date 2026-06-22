@@ -38,8 +38,8 @@ export const uploadDocument = async (req, res, next) => {
             });
         }
 
-        // Production backend URL
-        const baseUrl = "https://memora-backend-cp4z.onrender.com";
+        const baseUrl =
+            process.env.API_BASE_URL || `${req.protocol}://${req.get("host")}`;
 
         const fileUrl = `${baseUrl}/uploads/documents/${req.file.filename}`;
 
