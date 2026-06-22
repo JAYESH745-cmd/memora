@@ -85,6 +85,9 @@ export const getDashboard = async (req, res, next) => {
       .limit(5)
       .select('title fileName lastAccessed status');
 
+    const documentActivityDates = await Document.find({ userId })
+      .select('lastAccessed createdAt');
+
     const recentQuizzes = await Quiz.find({ userId })
       .sort({ createdAt: -1 })
       .limit(5)
@@ -92,7 +95,7 @@ export const getDashboard = async (req, res, next) => {
       .select('title score totalQuestions completedAt');
 
     const studyActivityDates = [
-      ...recentDocuments.map(doc => doc.lastAccessed || doc.createdAt),
+      ...documentActivityDates.map(doc => doc.lastAccessed || doc.createdAt),
       ...quizzes.map(quiz => quiz.completedAt || quiz.updatedAt),
       ...flashcardSets.flatMap(set =>
         set.cards

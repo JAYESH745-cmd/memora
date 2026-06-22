@@ -41,23 +41,63 @@ const numberOrZero = (value) => {
   return Number.isFinite(number) ? number : 0;
 };
 
+const toDayKey = (date) => {
+  if (!date) return null;
+
+  const value = new Date(date);
+  if (Number.isNaN(value.getTime())) return null;
+
+  return value.toISOString().slice(0, 10);
+};
+
+const getPreviousDayKey = (dayKey) => {
+  const date = new Date(`${dayKey}T00:00:00.000Z`);
+  date.setUTCDate(date.getUTCDate() - 1);
+  return toDayKey(date);
+};
+
+const calculateStableStreak = (dates) => {
+  const activityDays = new Set(dates.map(toDayKey).filter(Boolean));
+  if (activityDays.size === 0) return null;
+
+  const todayKey = toDayKey(new Date());
+  let cursor = activityDays.has(todayKey)
+    ? todayKey
+    : [...activityDays].sort().at(-1);
+
+  let streak = 0;
+  while (cursor && activityDays.has(cursor)) {
+    streak += 1;
+    cursor = getPreviousDayKey(cursor);
+  }
+
+  return streak;
+};
+
 const normalizeDashboard = (payload) => {
   const data = payload?.data ?? payload ?? {};
   const overview = data.overview ?? {};
   const recentActivity = data.recentActivity ?? {};
+  const documents = Array.isArray(recentActivity.documents)
+    ? recentActivity.documents
+    : [];
+  const quizzes = Array.isArray(recentActivity.quizzes)
+    ? recentActivity.quizzes
+    : [];
+  const stableStreak = calculateStableStreak([
+    ...documents.map((doc) => doc.lastAccessed || doc.createdAt),
+    ...quizzes.map((quiz) => quiz.completedAt || quiz.createdAt),
+  ]);
 
   return {
     overview: {
       ...emptyDashboard.overview,
       ...overview,
+      studyStreak: stableStreak ?? numberOrZero(overview.studyStreak),
     },
     recentActivity: {
-      documents: Array.isArray(recentActivity.documents)
-        ? recentActivity.documents
-        : [],
-      quizzes: Array.isArray(recentActivity.quizzes)
-        ? recentActivity.quizzes
-        : [],
+      documents,
+      quizzes,
     },
   };
 };
