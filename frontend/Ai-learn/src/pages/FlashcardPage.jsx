@@ -68,7 +68,6 @@ const FlashcardPage = () => {
             ? {
                 ...item,
                 isStarred: !item.isStarred,
-                starred: !item.starred,
               }
             : item
         ),

@@ -39,7 +39,7 @@ export const generateFlashcards = async (req, res, next) => {
         cards:cards.map(card=>({
             question:card.question,
             answer:card.answer,
-            difficulty:card.difficulty,
+            difficult:card.difficulty || card.difficult || "medium",
             reviewCount:0,
             isStarred:false
 

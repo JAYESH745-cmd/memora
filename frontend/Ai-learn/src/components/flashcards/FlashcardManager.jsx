@@ -38,7 +38,7 @@ const FlashcardManager = ({ documentId }) => {
     try {
       const res = await flashcardService.getFlashcardsForDocument(documentId);
       setFlashcardSets(res.data);
-    } catch (error) {
+    } catch {
       toast.error("Failed to fetch flashcard sets");
     } finally {
       setLoading(false);
@@ -257,12 +257,12 @@ const handleToggleStar = async (cardId) => {
         ...prev,
         cards: prev.cards.map((card) =>
           card._id === cardId
-            ? { ...card, starred: !card.starred }
+            ? { ...card, isStarred: !card.isStarred }
             : card
         ),
       };
     });
-  } catch (error) {
+  } catch {
     toast.error("Failed to update star");
   }
 };

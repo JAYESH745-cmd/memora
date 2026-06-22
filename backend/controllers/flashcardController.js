@@ -39,7 +39,7 @@ export const reviewFlashcard=async (req,res,next)=>{
         userId:req.user._id
     })
     if(!flashcardSet){
-        return res.status(404),json({
+        return res.status(404).json({
             success:false,
             error:'Flashcard set or card not found',
         })
@@ -47,13 +47,13 @@ export const reviewFlashcard=async (req,res,next)=>{
 
     const cardIndex=flashcardSet.cards.findIndex(card=> card._id.toString()=== req.params.cardId);
     if(cardIndex===-1){
-        return res.status(404),json({
+        return res.status(404).json({
             success:false,
             error:'Flashcard not found in set',
         })
     }
 
-    flashcardSet.cards[cardIndex].lastReviewed=new Date();
+    flashcardSet.cards[cardIndex].lastRevised=new Date();
     flashcardSet.cards[cardIndex].reviewCount+=1;
 
     await flashcardSet.save();
@@ -93,9 +93,8 @@ export const toggleStarFlashcard = async (req, res, next) => {
       });
     }
 
-    // ✅ TOGGLE (use SAME FIELD as frontend)
-    flashcardSet.cards[cardIndex].starred =
-      !flashcardSet.cards[cardIndex].starred;
+    flashcardSet.cards[cardIndex].isStarred =
+      !flashcardSet.cards[cardIndex].isStarred;
 
     // ✅ SAVE THE DOCUMENT (NOT THE MODEL)
     await flashcardSet.save();
@@ -104,7 +103,7 @@ export const toggleStarFlashcard = async (req, res, next) => {
       success: true,
       data: flashcardSet.cards[cardIndex],
       message: `Flashcard ${
-        flashcardSet.cards[cardIndex].starred ? "starred" : "unstarred"
+        flashcardSet.cards[cardIndex].isStarred ? "starred" : "unstarred"
       }`,
     });
   } catch (error) {
@@ -115,13 +114,13 @@ export const toggleStarFlashcard = async (req, res, next) => {
 export const deleteFlashcardset=async (req,res,next)=>{
     try {
      const flashcardSet=await Flashcard.findOne({
-        'cards._id':req.params.cardId,
+        _id:req.params.id,
         userId:req.user._id
     })
     if(!flashcardSet){
-        return res.status(404),json({
+        return res.status(404).json({
             success:false,
-            error:'Flashcard set or card not found',
+            error:'Flashcard set not found',
         })
     }
 
