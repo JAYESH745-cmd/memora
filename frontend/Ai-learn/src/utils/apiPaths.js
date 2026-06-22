@@ -1,4 +1,13 @@
-export const BASE_URL = "https://memora-backend-cp4z.onrender.com";
+const DEPLOYED_API_URL = "https://memora-backend-cp4z.onrender.com";
+const LOCAL_API_URL = "http://localhost:8000";
+
+const isLocalHost =
+  typeof window !== "undefined" &&
+  ["localhost", "127.0.0.1"].includes(window.location.hostname);
+
+export const BASE_URL =
+  import.meta.env.VITE_API_BASE_URL ||
+  (isLocalHost ? LOCAL_API_URL : DEPLOYED_API_URL);
 
 export const API_PATHS = {
   AUTH: {
