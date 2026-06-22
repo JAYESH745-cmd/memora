@@ -2,6 +2,39 @@ import Document from '../models/document.js';
 import Flashcard from '../models/flashcard.js';
 import Quiz from '../models/quiz.js';
 
+const toDayKey = (date) => {
+  if (!date) return null;
+
+  const value = new Date(date);
+  if (Number.isNaN(value.getTime())) return null;
+
+  return value.toISOString().slice(0, 10);
+};
+
+const getPreviousDayKey = (dayKey) => {
+  const date = new Date(`${dayKey}T00:00:00.000Z`);
+  date.setUTCDate(date.getUTCDate() - 1);
+  return toDayKey(date);
+};
+
+const calculateStudyStreak = (dates) => {
+  const activityDays = new Set(dates.map(toDayKey).filter(Boolean));
+  if (activityDays.size === 0) return 0;
+
+  const todayKey = toDayKey(new Date());
+  let cursor = activityDays.has(todayKey)
+    ? todayKey
+    : [...activityDays].sort().at(-1);
+
+  let streak = 0;
+  while (cursor && activityDays.has(cursor)) {
+    streak += 1;
+    cursor = getPreviousDayKey(cursor);
+  }
+
+  return streak;
+};
+
 // @desc    Get user learning statistics
 // @route   GET /api/progress/dashboard
 // @access  Private
@@ -58,8 +91,17 @@ export const getDashboard = async (req, res, next) => {
       .populate('documentId', 'title')
       .select('title score totalQuestions completedAt');
 
-    // Study streak (simplified – mock data)
-    const studyStreak = Math.floor(Math.random() * 7) + 1;
+    const studyActivityDates = [
+      ...recentDocuments.map(doc => doc.lastAccessed || doc.createdAt),
+      ...quizzes.map(quiz => quiz.completedAt || quiz.updatedAt),
+      ...flashcardSets.flatMap(set =>
+        set.cards
+          .map(card => card.lastRevised)
+          .filter(Boolean)
+      ),
+    ];
+
+    const studyStreak = calculateStudyStreak(studyActivityDates);
 
     res.status(200).json({
       success: true,

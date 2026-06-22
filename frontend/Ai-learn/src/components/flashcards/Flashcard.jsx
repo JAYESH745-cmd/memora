@@ -5,15 +5,14 @@ const Flashcard = ({ flashcard, onToggleStar }) => {
   const [isFlipped, setIsFlipped] = useState(false);
 
   const difficultyColors = {
-  easy: "bg-green-600",
-  medium: "bg-yellow-500",
-  hard: "bg-red-600",
-};
-const difficult =
-  flashcard.difficult?.toLowerCase() || "medium";
+    easy: "bg-emerald-50 text-emerald-700 ring-emerald-100",
+    medium: "bg-amber-50 text-amber-700 ring-amber-100",
+    hard: "bg-red-50 text-red-700 ring-red-100",
+  };
+  const difficult = flashcard.difficult?.toLowerCase() || "medium";
 
   return (
-    <div style={{ perspective: "1000px" }} className="relative h-56 w-full">
+    <div style={{ perspective: "1000px" }} className="relative h-80 w-full">
       <div
         className="relative h-full w-full transition-transform duration-500"
         style={{
@@ -21,9 +20,8 @@ const difficult =
           transform: isFlipped ? "rotateY(180deg)" : "rotateY(0deg)",
         }}
       >
-        {/* FRONT */}
         <div
-          className="absolute inset-0 rounded-2xl bg-white border border-slate-200 shadow-sm"
+          className="absolute inset-0 cursor-pointer rounded-lg border border-slate-200 bg-white shadow-sm transition hover:shadow-lg"
           style={{
             backfaceVisibility: "hidden",
             zIndex: isFlipped ? 0 : 1,
@@ -31,52 +29,44 @@ const difficult =
           }}
           onClick={() => setIsFlipped(true)}
         >
-          {/* STAR — WORKS */}
           <button
+            type="button"
             onClick={(e) => {
               e.stopPropagation();
               onToggleStar?.(flashcard._id);
             }}
-            className="absolute top-4 right-4 z-20"
+            className="absolute right-5 top-5 z-20 flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-400 transition hover:bg-slate-50"
+            aria-label="Toggle star"
           >
             <Star
               className={`w-5 h-5 ${
-                flashcard.starred
+                flashcard.starred || flashcard.isStarred
                   ? "fill-yellow-400 text-yellow-400"
                   : "text-slate-400"
               }`}
             />
           </button>
-         <span
-  className={`
-    absolute top-4 left-4
-    px-5 py-2
-    rounded-xl
-    text-sm font-bold uppercase
-    tracking-wide
-    text-white
-    shadow-lg
-    ${difficultyColors[difficult] || "bg-slate-700"}
-  `}
->
-  {difficult}
-</span>
+          <span
+            className={`absolute left-5 top-5 rounded-lg px-3 py-1.5 text-xs font-bold uppercase tracking-wide ring-1 ${
+              difficultyColors[difficult] || "bg-slate-100 text-slate-700 ring-slate-200"
+            }`}
+          >
+            {difficult}
+          </span>
 
-          {/* QUESTION */}
-          <div className="h-full flex items-center justify-center text-center p-6">
-            <h3 className="text-lg font-semibold max-w-[90%]">
+          <div className="flex h-full items-center justify-center px-8 py-16 text-center">
+            <h3 className="max-w-2xl text-2xl font-bold leading-9 text-slate-950">
               {flashcard.question}
             </h3>
           </div>
 
-          <span className="absolute bottom-4 left-1/2 -translate-x-1/2 text-sm text-slate-500">
+          <span className="absolute bottom-5 left-1/2 -translate-x-1/2 rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-500">
             Click to reveal answer
           </span>
         </div>
 
-        {/* BACK */}
         <div
-          className="absolute inset-0 rounded-2xl bg-emerald-50 border border-emerald-200 shadow-sm"
+          className="absolute inset-0 cursor-pointer rounded-lg border border-slate-800 bg-slate-950 text-white shadow-lg"
           style={{
             transform: "rotateY(180deg)",
             backfaceVisibility: "hidden",
@@ -85,30 +75,21 @@ const difficult =
           }}
           onClick={() => setIsFlipped(false)}
         >
-          {/* DIFFICULTY — NOW VISIBLE */}
           <span
-          className={`
-          absolute top-4 left-4
-          px-5 py-2
-          rounded-xl
-          text-sm font-bold uppercase
-          tracking-wide
-          text-white
-          shadow-lg
-          ${difficultyColors[difficult] || "bg-slate-700"}
-        `}
-      >
-        {difficult}
-      </span>
+            className={`absolute left-5 top-5 rounded-lg px-3 py-1.5 text-xs font-bold uppercase tracking-wide ring-1 ${
+              difficultyColors[difficult] || "bg-slate-100 text-slate-700 ring-slate-200"
+            }`}
+          >
+            {difficult}
+          </span>
 
-          {/* ANSWER */}
-          <div className="h-full flex items-center justify-center text-center p-6">
-            <p className="text-base max-w-[90%]">
+          <div className="flex h-full items-center justify-center px-8 py-16 text-center">
+            <p className="max-w-2xl text-xl font-semibold leading-8 text-slate-100">
               {flashcard.answer}
             </p>
           </div>
 
-          <span className="absolute bottom-4 left-1/2 -translate-x-1/2 text-sm text-slate-500">
+          <span className="absolute bottom-5 left-1/2 -translate-x-1/2 rounded-lg bg-white/10 px-3 py-1.5 text-xs font-semibold text-slate-300">
             Click to flip back
           </span>
         </div>
