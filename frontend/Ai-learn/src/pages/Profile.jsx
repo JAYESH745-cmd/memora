@@ -8,10 +8,10 @@ const Profile = () => {
 
   const [isEditing, setIsEditing] = useState(false);
   const [form, setForm] = useState({
-    name: user?.username || "",
+    username: user?.username || "",
     email: user?.email || "",
   });
-  const [saving, setSaving] = useState(false);
+  const [saving] = useState(false);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -32,11 +32,11 @@ const Profile = () => {
         {/* Avatar */}
         <div className="flex items-center gap-4">
           <div className="w-14 h-14 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xl font-semibold">
-            {user?.name?.[0]?.toUpperCase() || "U"}
+            {user?.username?.[0]?.toUpperCase() || "U"}
           </div>
 
           <div>
-            <h3 className="text-lg font-semibold">{user?.name}</h3>
+            <h3 className="text-lg font-semibold">{user?.username}</h3>
             <p className="text-sm text-slate-500">Account Settings</p>
           </div>
         </div>
@@ -47,8 +47,8 @@ const Profile = () => {
           <div className="relative">
             <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <input
-              name="name"
-              value={form.name}
+              name="username"
+              value={form.username}
               onChange={handleChange}
               disabled={!isEditing}
               className="

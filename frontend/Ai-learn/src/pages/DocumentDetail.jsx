@@ -8,6 +8,7 @@ import ChatInterface from "../components/chat/ChatInterface.jsx";
 import AIActions from "../components/ai/aiActions.jsx";
 import FlashcardManager from "../components/flashcards/FlashcardManager.jsx";
 import QuizManager from "../components/quizzes/QuizManager.jsx";
+import { BASE_URL } from "../utils/apiPaths.js";
 
 const DocumentDetailPage = () => {
   const { id } = useParams();
@@ -21,7 +22,7 @@ const DocumentDetailPage = () => {
       try {
         const data = await documentService.getDocumentById(id);
         setDocument(data);
-      } catch (error) {
+      } catch {
         toast.error("Failed to fetch document details");
       } finally {
         setLoading(false);
@@ -38,9 +39,7 @@ const DocumentDetailPage = () => {
     const filePath = document.data.filePath;
     if (filePath.startsWith("http")) return filePath;
 
-    const baseUrl =
-      process.env.REACT_APP_API_URL || "http://localhost:8000";
-    return `${baseUrl}${filePath.startsWith("/") ? "" : "/"}${filePath}`;
+    return `${BASE_URL}${filePath.startsWith("/") ? "" : "/"}${filePath}`;
   };
 
   // ---------- TAB CONTENT ----------

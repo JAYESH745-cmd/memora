@@ -21,8 +21,8 @@ const FlashcardList = () => {
     setLoading(true);
     try {
       const res = await flashcardService.getAllFlashcardSets();
-      setFlashcardSets(res.data); // ✅ array
-    } catch (err) {
+      setFlashcardSets(Array.isArray(res?.data) ? res.data : []);
+    } catch {
       toast.error("Failed to load flashcards");
     } finally {
       setLoading(false);
@@ -53,7 +53,7 @@ const FlashcardList = () => {
         {flashcardSets.map((set) => (
           <div
             key={set._id}
-            onClick={() => navigate(`/flashcards/${set.documentId._id}`)}
+            onClick={() => navigate(`/flashcards/${set.documentId?._id || set.documentId}`)}
             className="cursor-pointer rounded-xl border bg-white p-5 hover:shadow-md transition"
           >
             <div className="flex justify-between items-start">

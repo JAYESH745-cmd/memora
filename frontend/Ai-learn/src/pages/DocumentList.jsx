@@ -1,5 +1,5 @@
 import React, { useEffect, useState, } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import {
   FileText,
@@ -33,7 +33,7 @@ const DocumentListPage = () => {
   const fetchDocuments = async () => {
     try {
       const data = await documentService.getDocuments();
-      setDocuments(data);
+      setDocuments(Array.isArray(data) ? data : []);
     } catch {
       toast.error("Failed to fetch documents");
     } finally {
@@ -151,7 +151,10 @@ const DocumentListPage = () => {
                   </div>
 
                   <button
-                    onClick={() => handleDeleteRequest(doc)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteRequest(doc);
+                    }}
                     className="text-slate-400 hover:text-red-500"
                   >
                     <Trash2 className="w-4 h-4" />
@@ -163,7 +166,7 @@ const DocumentListPage = () => {
                 </h3>
 
                 <p className="text-xs text-slate-500 mt-1">
-                  {(doc.fileSize / 1024).toFixed(1)} KB
+                  {((doc.fileSize ?? 0) / 1024).toFixed(1)} KB
                 </p>
 
                 <div className="flex items-center gap-2 mt-4 text-xs">
